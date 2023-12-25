@@ -624,8 +624,8 @@ pub fn createApp(
         d8_cmd_builder.addArg(java_dir);
         d8_cmd_builder.addArg("--output");
         d8_cmd_builder.addArg(java_dir);
-        // make_unsigned_apk.step.dependOn(&d8_cmd_builder.step);
-        d8_cmd_builder.step.dependOn(&make_unsigned_apk.step);
+        make_unsigned_apk.step.dependOn(&d8_cmd_builder.step);
+        // d8_cmd_builder.step.dependOn(&make_unsigned_apk.step);
 
         const dex_file = std.fs.path.resolve(sdk.b.allocator, &[_][]const u8{ java_dir, "classes.dex" }) catch unreachable;
         // make_unsigned_apk.addArg("-I");

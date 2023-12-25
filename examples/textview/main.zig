@@ -13,7 +13,7 @@ const c = android.egl.c;
 const app_log = std.log.scoped(.app);
 comptime {
     _ = android.ANativeActivity_createFunc;
-    _ = @import("root").log;
+    // _ = @import("root").log;
 }
 
 pub const AndroidApp = struct {
@@ -32,7 +32,7 @@ pub const AndroidApp = struct {
     pipe: [2]std.os.fd_t = undefined,
     // This is used with futexes so that runOnUiThread waits until the callback is completed
     // before returning.
-    uiThreadCondition: std.atomic.Atomic(u32) = std.atomic.Atomic(u32).init(0),
+    uiThreadCondition: std.atomic.Value(u32) = std.atomic.Value(u32).init(0),
     uiThreadLooper: *android.ALooper = undefined,
     uiThreadId: std.Thread.Id = undefined,
 
@@ -91,7 +91,7 @@ pub const AndroidApp = struct {
 
         const Instance = struct {
             fn callback(_: c_int, _: c_int, data: ?*anyopaque) callconv(.C) c_int {
-                const data_struct = @ptrCast(*Data, @alignCast(@alignOf(Data), data.?));
+                const data_struct = @as(*Data, @ptrCast(@alignCast(data)));
                 const self_ptr = data_struct.self;
                 defer self_ptr.allocator.destroy(data_struct);
 
